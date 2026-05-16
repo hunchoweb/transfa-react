@@ -171,7 +171,7 @@ export default function AuthConfirmPin({
                   onKeyPress={(e) => handleKeyPress(e, index)}
                   keyboardType="number-pad"
                   keyboardAppearance="dark"
-                  maxLength={1}
+                  maxLength={4}
                   textAlign="center"
                   placeholderTextColor="rgba(255, 255, 255, 0.15)"
                   onFocus={() => setFocusedIndex(index)}

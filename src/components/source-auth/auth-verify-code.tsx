@@ -1,15 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -182,7 +174,7 @@ export default function AuthVerifyCode({
               onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
               keyboardType="number-pad"
               keyboardAppearance="dark"
-              maxLength={Platform.OS === 'android' ? 1 : 1}
+              maxLength={6}
               textContentType="oneTimeCode"
               textAlign="center"
               placeholder="-"

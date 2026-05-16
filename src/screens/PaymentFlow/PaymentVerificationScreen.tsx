@@ -631,20 +631,41 @@ const PaymentVerificationScreen = () => {
 
   const handlePinChange = useCallback(
     async (value: string, index: number) => {
-      if (value && !/^\d$/.test(value)) {
+      const cleaned = value.replace(/[^0-9]/g, '');
+
+      if (value && !cleaned) {
         return;
       }
 
       const next = [...pin];
-      next[index] = value;
+
+      if (cleaned.length > 1) {
+        const digits = cleaned.split('').slice(0, 4);
+        const startIndex = digits.length === 4 ? 0 : index;
+        digits.slice(0, 4 - startIndex).forEach((digit, offset) => {
+          next[startIndex + offset] = digit;
+        });
+        setPin(next);
+        setError(null);
+
+        const lastFilledIndex = Math.min(startIndex + digits.length - 1, 3);
+        pinInputRefs.current[lastFilledIndex]?.focus();
+
+        if (next.every((digit) => digit !== '')) {
+          await submitWithPin(next.join(''));
+        }
+        return;
+      }
+
+      next[index] = cleaned;
       setPin(next);
       setError(null);
 
-      if (value && index < 3) {
+      if (cleaned && index < 3) {
         pinInputRefs.current[index + 1]?.focus();
       }
 
-      if (value && index === 3 && next.every((digit) => digit !== '')) {
+      if (cleaned && index === 3 && next.every((digit) => digit !== '')) {
         await submitWithPin(next.join(''));
       }
     },
@@ -923,7 +944,7 @@ const PaymentVerificationScreen = () => {
                   onKeyPress={({ nativeEvent }) => handlePinKeyPress(nativeEvent.key, index)}
                   keyboardType="number-pad"
                   keyboardAppearance="dark"
-                  maxLength={1}
+                  maxLength={4}
                   secureTextEntry={false}
                   textAlign="center"
                   autoFocus={index === 0}
