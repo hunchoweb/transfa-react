@@ -79,6 +79,7 @@ export type AppStackParamList = {
     outcome: 'success' | 'failure' | 'manual_review';
     status: string;
     reason?: string;
+    nextStep?: 'CreateUsername' | 'CreatePin' | 'AppTabs';
   };
   UserSearch: undefined;
   Scan: undefined;

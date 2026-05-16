@@ -61,7 +61,7 @@ const OnboardingResultScreen = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute<ResultRoute>();
 
-  const { outcome, status, reason } = route.params;
+  const { outcome, status, reason, nextStep = 'CreateUsername' } = route.params;
   const failureReason = normalizeReason(reason);
   const recovery = resolveRecovery(status, failureReason);
 
@@ -70,7 +70,7 @@ const OnboardingResultScreen = () => {
       <AuthSuccess
         title="Success!"
         subtitle="Profile created successfully."
-        onComplete={() => navigation.dispatch(StackActions.replace('CreateUsername'))}
+        onComplete={() => navigation.dispatch(StackActions.replace(nextStep))}
       />
     );
   }

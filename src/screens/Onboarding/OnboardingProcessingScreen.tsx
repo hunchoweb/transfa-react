@@ -10,6 +10,7 @@ type Navigation = NativeStackNavigationProp<AppStackParamList, 'CreateAccount'>;
 
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLLS = 120;
+const MIN_SUCCESS_PROCESSING_MS = 3500;
 
 const OnboardingProcessingScreen = () => {
   const navigation = useNavigation<Navigation>();
@@ -19,17 +20,28 @@ const OnboardingProcessingScreen = () => {
 
   useEffect(() => {
     let isActive = true;
+    const startedAt = Date.now();
+
+    const waitForSuccessProcessingMinimum = async () => {
+      const remainingMs = MIN_SUCCESS_PROCESSING_MS - (Date.now() - startedAt);
+      if (remainingMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remainingMs));
+      }
+    };
 
     const goToResult = (
       outcome: 'success' | 'failure' | 'manual_review',
       status: string,
-      reason?: string
+      reason?: string,
+      nextStep?: 'CreateUsername' | 'CreatePin' | 'AppTabs'
     ) => {
       if (!isActive || hasNavigatedRef.current) {
         return;
       }
       hasNavigatedRef.current = true;
-      navigation.dispatch(StackActions.replace('OnboardingResult', { outcome, status, reason }));
+      navigation.dispatch(
+        StackActions.replace('OnboardingResult', { outcome, status, reason, nextStep })
+      );
     };
 
     const goToRoute = (
@@ -60,12 +72,14 @@ const OnboardingProcessingScreen = () => {
         }
 
         if (statusResponse.next_step === 'create_username') {
-          goToRoute('CreateUsername');
+          await waitForSuccessProcessingMinimum();
+          goToResult('success', normalizedStatus || 'create_username', reason, 'CreateUsername');
           return;
         }
 
         if (statusResponse.next_step === 'create_pin') {
-          goToRoute('CreatePin');
+          await waitForSuccessProcessingMinimum();
+          goToResult('success', normalizedStatus || 'create_pin', reason, 'CreatePin');
           return;
         }
 
@@ -82,7 +96,8 @@ const OnboardingProcessingScreen = () => {
         }
 
         if (normalizedStatus === 'completed') {
-          goToResult('success', normalizedStatus, reason);
+          await waitForSuccessProcessingMinimum();
+          goToResult('success', normalizedStatus, reason, 'CreateUsername');
           return;
         }
 
