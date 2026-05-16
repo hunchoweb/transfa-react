@@ -32,6 +32,7 @@ import OnboardingResultScreen from '@/screens/Onboarding/OnboardingResultScreen'
 import CreateUsernameScreen from '@/screens/Onboarding/CreateUsernameScreen';
 import CreatePinScreen from '@/screens/Onboarding/CreatePinScreen';
 import ConfirmPinScreen from '@/screens/Onboarding/ConfirmPinScreen';
+import PinSetupSuccessScreen from '@/screens/Onboarding/PinSetupSuccessScreen';
 import UserSearchScreen from '@/screens/Home/UserSearchScreen';
 import UserProfileViewScreen from '@/screens/Home/UserProfileViewScreen';
 import PayUserScreen from '@/screens/PaymentFlow/PayUserScreen';
@@ -75,6 +76,7 @@ export type AppStackParamList = {
   CreateUsername: undefined;
   CreatePin: undefined;
   ConfirmPin: { pin: string };
+  PinSetupSuccess: undefined;
   OnboardingResult: {
     outcome: 'success' | 'failure' | 'manual_review';
     status: string;
@@ -292,6 +294,11 @@ const AppStack = () => {
       <Stack.Screen
         name="ConfirmPin"
         component={ConfirmPinScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="PinSetupSuccess"
+        component={PinSetupSuccessScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen

@@ -37,7 +37,7 @@ const ConfirmPinScreen = () => {
       } catch (localError) {
         console.warn('Failed to persist local PIN cache after backend setup', localError);
       }
-      navigation.dispatch(StackActions.replace('AppTabs'));
+      navigation.dispatch(StackActions.replace('PinSetupSuccess'));
     } catch (error: any) {
       Alert.alert(
         'Unable to save PIN',
