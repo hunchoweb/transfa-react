@@ -24,6 +24,7 @@ import {
 import { theme } from '@/constants/theme';
 import { useTransactionHistory, useUserProfile } from '@/api/transactionApi';
 import { formatCurrency } from '@/utils/formatCurrency';
+import { formatTransactionDescription } from '@/utils/transactionDescription';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
@@ -176,7 +177,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, currentU
           <View style={styles.transactionInfo}>
             <Text style={styles.transactionTitle}>{getTransactionTitle()}</Text>
             <Text style={styles.transactionDescription} numberOfLines={1}>
-              {transaction.description || 'No description'}
+              {formatTransactionDescription(transaction.description)}
             </Text>
           </View>
 

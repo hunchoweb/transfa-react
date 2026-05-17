@@ -15,6 +15,7 @@
  */
 import axios from 'axios';
 import { Clerk } from '@clerk/clerk-expo';
+import { isMockBackendEnabled, mockBackendAdapter } from './mockBackend';
 
 // Retrieve the API Gateway URL from environment variables.
 // Fallback to a local default for development.
@@ -23,6 +24,7 @@ const API_GATEWAY_URL = process.env.EXPO_PUBLIC_API_GATEWAY_URL || 'http://local
 // Create a new Axios instance with the base URL.
 const apiClient = axios.create({
   baseURL: API_GATEWAY_URL,
+  ...(isMockBackendEnabled() ? { adapter: mockBackendAdapter } : {}),
 });
 
 // Add a request interceptor to inject the authentication token.

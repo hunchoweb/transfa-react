@@ -2,11 +2,11 @@ import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import Eyeslash from '@/assets/icons/eyeSlash.svg';
 import List from '@/assets/icons/list.svg';
 import NotificationIcon from '@/assets/icons/notification.svg';
-import Recieve from '@/assets/icons/recieve.svg';
 import Scan from '@/assets/icons/scan.svg';
 import Search from '@/assets/icons/search-normal.svg';
-import Send from '@/assets/icons/send.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
+import WalletReceiveIcon from '@/assets/icons/wallet-receive.svg';
+import WalletSendIcon from '@/assets/icons/wallet-send.svg';
 import WalletPlusIcon from '@/assets/icons/wallet.svg';
 import Avatar from '@/assets/images/avatar.svg';
 import Avatar1 from '@/assets/images/avatar1.svg';
@@ -25,6 +25,7 @@ import {
 } from '@/api/transactionApi';
 import { AppNavigationProp } from '@/types/navigation';
 import type { TransactionHistoryItem, UserDiscoveryResult } from '@/types/api';
+import { formatTransactionDescription } from '@/utils/transactionDescription';
 import { moderateScale, scale, verticalScale } from '@/utils/responsive';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
@@ -34,6 +35,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -218,7 +220,7 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: scale(10),
+    borderRadius: scale(12),
     paddingVertical: verticalScale(5),
     paddingHorizontal: scale(20),
     borderWidth: 1,
@@ -356,7 +358,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     color: '#000000',
     fontFamily: 'Montserrat_400Regular',
-    maxWidth: '80%',
+    maxWidth: '95%',
   },
   sheetTransactionAmount: {
     fontSize: moderateScale(16),
@@ -572,6 +574,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<AppNavigationProp>();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [isSheetExpanded, setIsSheetExpanded] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const hasAnimatedTransactions = useRef(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['35%', '85%'], []);
@@ -581,12 +584,41 @@ export default function HomeScreen() {
   const scrollY = useSharedValue(0);
   const lastScrollY = useSharedValue(0);
   const sheetAnimatedIndex = useSharedValue(0);
-  const { data: userProfile } = useUserProfile();
-  const { data: accountBalance } = useAccountBalance();
-  const { data: primaryAccountDetails } = usePrimaryAccountDetails();
-  const { data: frequentUsersData, isLoading: isLoadingUsers } = useFrequentUsers(6);
-  const { data: transactionHistoryData, isLoading: isLoadingTransactions } =
-    useTransactionHistory();
+  const { data: userProfile, refetch: refetchUserProfile } = useUserProfile();
+  const { data: accountBalance, refetch: refetchAccountBalance } = useAccountBalance();
+  const { data: primaryAccountDetails, refetch: refetchPrimaryAccountDetails } =
+    usePrimaryAccountDetails();
+  const {
+    data: frequentUsersData,
+    isLoading: isLoadingUsers,
+    refetch: refetchFrequentUsers,
+  } = useFrequentUsers(6);
+  const {
+    data: transactionHistoryData,
+    isLoading: isLoadingTransactions,
+    refetch: refetchTransactionHistory,
+  } = useTransactionHistory();
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        refetchUserProfile(),
+        refetchAccountBalance(),
+        refetchPrimaryAccountDetails(),
+        refetchFrequentUsers(),
+        refetchTransactionHistory(),
+      ]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [
+    refetchAccountBalance,
+    refetchFrequentUsers,
+    refetchPrimaryAccountDetails,
+    refetchTransactionHistory,
+    refetchUserProfile,
+  ]);
 
   const navbarVisibility = useDerivedValue(() => {
     if (!isNavbarVisible) return 0;
@@ -662,7 +694,7 @@ export default function HomeScreen() {
         return {
           id: transaction.id,
           type: isSent ? 'sent' : 'received',
-          description: transaction.description || 'Transaction',
+          description: formatTransactionDescription(transaction.description, 'Transaction'),
           amount: koboToNaira(transaction.amount),
           otherUserAvatar: pickAvatarKey(counterpartySeed),
         };
@@ -766,6 +798,15 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           scrollEnabled={!isSheetExpanded}
           pointerEvents={isSheetExpanded ? 'none' : 'auto'}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor="#FFD300"
+              colors={['#FFD300']}
+              progressBackgroundColor="#1A1A1A"
+            />
+          }
           onScroll={(event) => {
             const currentScrollY = event.nativeEvent.contentOffset.y;
             scrollY.value = currentScrollY;
@@ -868,7 +909,7 @@ export default function HomeScreen() {
               }}
             >
               <View style={styles.actionButtonIcon}>
-                <Send width={scale(24)} height={scale(24)} color="#FFFFFF" />
+                <WalletSendIcon width={scale(24)} height={scale(24)} color="#FFFFFF" />
               </View>
               <Text style={styles.actionButtonText}>Send</Text>
             </Pressable>
@@ -892,7 +933,7 @@ export default function HomeScreen() {
               }}
             >
               <View style={styles.actionButtonIcon}>
-                <Recieve width={scale(24)} height={scale(24)} color="#FFFFFF" />
+                <WalletReceiveIcon width={scale(24)} height={scale(24)} color="#FFFFFF" />
               </View>
               <Text style={styles.actionButtonText}>Receive</Text>
             </Pressable>

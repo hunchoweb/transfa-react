@@ -1,7 +1,7 @@
 import AddIcon from '@/assets/icons/add.svg';
 import ArrowRightIcon from '@/assets/icons/arrow-right1.svg';
 import BackIcon from '@/assets/icons/back.svg';
-import CloseIcon from '@/assets/icons/cancel.svg';
+import CloseIcon from '@/assets/icons/close.svg';
 import Eyeslash from '@/assets/icons/eyeSlash.svg';
 import NairaIcon from '@/assets/icons/naira.svg';
 import NotificationIcon from '@/assets/icons/notification.svg';
@@ -882,14 +882,13 @@ const SendUnifiedScreen = ({
                               onFocus={() => setFocusedField('search')}
                               onBlur={() => setFocusedField(null)}
                             />
+                            {isSearching ? (
+                              <ActivityIndicator size="small" color="#FFD300" />
+                            ) : null}
                           </View>
                         </View>
 
-                        {isSearching ? (
-                          <View style={styles.searchResultsContainer}>
-                            <ActivityIndicator size="small" color="#FFD300" />
-                          </View>
-                        ) : searchResults.length > 0 ? (
+                        {searchResults.length > 0 ? (
                           <View style={styles.searchResultsContainer}>
                             {searchResults.map((user) => {
                               const AvatarComponent = avatarComponents[user.avatarIndex];
@@ -956,7 +955,7 @@ const SendUnifiedScreen = ({
                               onPress={handleCloseUserForm}
                               style={styles.closeButton}
                             >
-                              <CloseIcon width={14} height={14} color="#000000" />
+                              <CloseIcon width={13} height={13} />
                             </TouchableOpacity>
                           ) : null}
                         </View>
@@ -967,7 +966,7 @@ const SendUnifiedScreen = ({
                           <TextInput
                             style={styles.cardInput}
                             placeholder="Enter Amount"
-                            placeholderTextColor="#6C6B6B"
+                            placeholderTextColor="#000000"
                             keyboardType="numeric"
                             value={formAmount}
                             onChangeText={setFormAmount}
@@ -978,12 +977,16 @@ const SendUnifiedScreen = ({
                         <TextInput
                           style={styles.cardNarrationInput}
                           placeholder="Enter Narration"
-                          placeholderTextColor="#6C6B6B"
+                          placeholderTextColor="#000000"
                           value={formNarration}
                           onChangeText={handleNarrationChange}
                         />
 
-                        <View style={styles.chipsContainer}>
+                        <ScrollView
+                          horizontal
+                          showsHorizontalScrollIndicator={false}
+                          contentContainerStyle={styles.chipsContainer}
+                        >
                           {NARRATION_CHIPS.map((chip) => (
                             <TouchableOpacity
                               key={chip}
@@ -1000,7 +1003,7 @@ const SendUnifiedScreen = ({
                               </Text>
                             </TouchableOpacity>
                           ))}
-                        </View>
+                        </ScrollView>
 
                         <TouchableOpacity style={styles.saveNewButton} onPress={handleSaveTransfer}>
                           <Text style={styles.saveNewButtonText}>Save</Text>
@@ -1164,12 +1167,18 @@ const SendUnifiedScreen = ({
               <View style={styles.outgoingSection}>
                 {/* <View style={styles.outgoingDivider} /> */}
                 <Text style={styles.outgoingTitle}>Outgoing transfers</Text>
-                {transferUsersWithAmount.map((user) => {
+                {transferUsersWithAmount.map((user, index) => {
                   const isExpanded = expandedUserId === user.id;
                   const AvatarComponent = avatarComponents[user.avatarIndex] || Avatar;
 
                   return (
-                    <View key={user.id} style={styles.outgoingItem}>
+                    <View
+                      key={user.id}
+                      style={[
+                        styles.outgoingItem,
+                        index < transferUsersWithAmount.length - 1 && styles.outgoingItemGap,
+                      ]}
+                    >
                       <TouchableOpacity
                         onPress={() => handleUserClick(user)}
                         style={styles.outgoingItemContent}
@@ -1312,6 +1321,7 @@ const SendUnifiedScreen = ({
           )}
 
           {/* Summary Section */}
+          <Text style={styles.summaryHeading}>Summary</Text>
           <View style={[styles.summarySection, { opacity: hasTransactions ? 1 : 0.4 }]}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Amount</Text>
@@ -1436,7 +1446,7 @@ const styles = StyleSheet.create({
   transferActions: {
     flexDirection: 'row',
     gap: 16,
-    marginBottom: 24,
+    // marginBottom: 24,
   },
   transferActionButtonWrapper: {
     flex: 1,
@@ -1466,13 +1476,11 @@ const styles = StyleSheet.create({
   transferActionTextActive: {
     color: '#FFFFFF',
   },
-  outgoingSection: {
-    marginBottom: 32,
-  },
+  outgoingSection: {},
   outgoingTitle: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#FFFFFF',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_400Regular',
     marginBottom: 16,
   },
   outgoingDivider: {
@@ -1487,8 +1495,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 12,
-    marginBottom: 16,
     borderCurve: 'continuous',
+  },
+  outgoingItemGap: {
+    marginBottom: 12,
   },
   outgoingItemContent: {
     flexDirection: 'row',
@@ -1606,11 +1616,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_600SemiBold',
   },
   formSection: {
-    marginBottom: 24,
+    // marginBottom: 24,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
+  inputGroup: {},
   inputLabel: {
     fontSize: 14,
     color: '#FFFFFF',
@@ -1674,11 +1682,17 @@ const styles = StyleSheet.create({
   sectionDivider: {
     height: 1,
     backgroundColor: '#6C6B6B',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 28,
+    marginBottom: 28,
   },
   summaryContainer: {
     marginBottom: 24,
+  },
+  summaryHeading: {
+    fontSize: 20,
+    color: '#FFD300',
+    fontFamily: 'Montserrat_700Bold',
+    marginBottom: 12,
   },
   summarySection: {
     backgroundColor: '#1A1A1A',
@@ -1949,11 +1963,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_600SemiBold',
   },
   searchSection: {
-    marginBottom: 20,
     zIndex: 10,
   },
   searchResultsContainer: {
-    marginTop: 8,
+    marginTop: 24,
     gap: 16,
   },
   searchResultCard: {
@@ -1991,7 +2004,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_400Regular',
   },
   noUserSelectedContainer: {
-    marginTop: 8,
+    marginTop: 24,
     height: 50,
     borderWidth: 1,
     borderColor: 'rgba(225, 225, 225, 0.2)',
@@ -2009,7 +2022,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 24,
   },
   newTransferHeader: {
     flexDirection: 'row',
@@ -2036,14 +2048,14 @@ const styles = StyleSheet.create({
   },
   newTransferFullname: {
     fontSize: 16,
-    color: '#6C6B6B',
+    color: '#000000',
     fontFamily: 'Montserrat_400Regular',
   },
   closeButton: {
     padding: 4,
   },
   cardLabel: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#0F0F0F',
     fontFamily: 'Montserrat_400Regular',
     marginBottom: 8,
@@ -2068,7 +2080,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 16,
     fontSize: 16,
     color: '#0F0F0F',
     fontFamily: 'Montserrat_400Regular',
@@ -2076,8 +2088,8 @@ const styles = StyleSheet.create({
   },
   chipsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
+    paddingRight: 8,
     marginBottom: 20,
   },
   chip: {
@@ -2085,7 +2097,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#FFD300',
     borderStyle: 'dashed',
   },
   chipSelected: {
@@ -2093,8 +2105,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 211, 0, 0.1)',
   },
   chipText: {
-    fontSize: 12,
-    color: '#6C6B6B',
+    fontSize: 14,
+    color: '#000000',
     fontFamily: 'Montserrat_500Medium',
   },
   chipTextSelected: {
