@@ -47,7 +47,7 @@ import {
 } from '@/api/transactionApi';
 import type { AppNavigationProp } from '@/types/navigation';
 import type { UserDiscoveryResult } from '@/types/api';
-import { formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
+import { formatAmountInput, formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
 import { normalizeUsername, usernameKey } from '@/utils/username';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -132,7 +132,7 @@ const nairaInputFromKobo = (value: number) => {
   if (!value || value <= 0) {
     return '';
   }
-  return (value / 100).toFixed(2);
+  return formatAmountInput((value / 100).toFixed(2));
 };
 
 const SendUnifiedScreen = ({
@@ -252,6 +252,8 @@ const SendUnifiedScreen = ({
       }))
       .slice(0, 3);
   }, [searchData?.users, searchQuery, username]);
+  const shouldShowSearchField = !isFromList && !isProfileRecipientFlow;
+  const shouldShowSearchResults = shouldShowSearchField && !selectedUserForTransfer;
 
   useEffect(() => {
     if (!isFromList || listMembers.length === 0) {
@@ -332,12 +334,6 @@ const SendUnifiedScreen = ({
   }, [activeMode, refetchBalance, refetchBeneficiaries]);
 
   useEffect(() => {
-    if (activeMode === 'withdraw' && !selectedAccountId && linkedAccounts.length > 0) {
-      setSelectedAccountId(linkedAccounts[0].id);
-    }
-  }, [activeMode, linkedAccounts, selectedAccountId]);
-
-  useEffect(() => {
     if (isProfileRecipientFlow && activeMode !== 'transfer') {
       setActiveMode('transfer');
     }
@@ -345,6 +341,15 @@ const SendUnifiedScreen = ({
 
   const formatBalance = (amount: number) => formatCurrency(amount);
   const formatAmount = (amount: number) => formatCurrency(amount);
+  const handleFormAmountChange = (value: string) => {
+    setFormAmount(formatAmountInput(value));
+  };
+  const handleWithdrawAmountChange = (value: string) => {
+    setWithdrawAmount(formatAmountInput(value));
+  };
+  const handleEditingAmountChange = (value: string) => {
+    setEditingAmount(formatAmountInput(value));
+  };
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);
@@ -357,7 +362,7 @@ const SendUnifiedScreen = ({
     );
 
     setSelectedUserForTransfer(user);
-    setSearchQuery('');
+    setSearchQuery(user.username);
 
     if (existingTransfer) {
       const existingNarration = existingTransfer.narration.trim();
@@ -561,16 +566,18 @@ const SendUnifiedScreen = ({
   };
 
   const maskAccountNumber = (accountNumber: string) => {
-    if (accountNumber.includes('*')) {
-      return accountNumber;
+    const normalized = accountNumber.trim();
+    if (normalized.includes('*')) {
+      const visibleStart = normalized.slice(0, 3);
+      const visibleEnd = normalized.slice(-2);
+      return `${visibleStart}*****${visibleEnd}`;
     }
-    if (accountNumber.length <= 3) {
-      return accountNumber;
+    if (normalized.length <= 5) {
+      return normalized;
     }
-    const firstThree = accountNumber.slice(0, 3);
-    const lastTwo = accountNumber.slice(-2);
-    const masked = '*'.repeat(accountNumber.length - 5);
-    return `${firstThree}${masked}${lastTwo}`;
+    const firstThree = normalized.slice(0, 3);
+    const lastTwo = normalized.slice(-2);
+    return `${firstThree}*****${lastTwo}`;
   };
 
   const handleLinkNewAccount = () => {
@@ -860,7 +867,7 @@ const SendUnifiedScreen = ({
               <View style={styles.formSection}>
                 {!isFromList && (
                   <>
-                    {!selectedUserForTransfer && !isProfileRecipientFlow ? (
+                    {shouldShowSearchField ? (
                       <View style={styles.searchSection}>
                         <View style={styles.inputGroup}>
                           <View
@@ -888,7 +895,7 @@ const SendUnifiedScreen = ({
                           </View>
                         </View>
 
-                        {searchResults.length > 0 ? (
+                        {shouldShowSearchResults && searchResults.length > 0 ? (
                           <View style={styles.searchResultsContainer}>
                             {searchResults.map((user) => {
                               const AvatarComponent = avatarComponents[user.avatarIndex];
@@ -919,13 +926,15 @@ const SendUnifiedScreen = ({
                           </View>
                         ) : null}
 
-                        {!searchQuery && transferUsers.length === 0 && (
+                        {shouldShowSearchResults && !searchQuery && transferUsers.length === 0 && (
                           <View style={styles.noUserSelectedContainer}>
                             <Text style={styles.noUserSelectedText}>No User Selected</Text>
                           </View>
                         )}
                       </View>
-                    ) : selectedUserForTransfer ? (
+                    ) : null}
+
+                    {selectedUserForTransfer ? (
                       <View style={styles.newTransferCard}>
                         <View style={styles.newTransferHeader}>
                           <View style={styles.newTransferUserRow}>
@@ -969,7 +978,7 @@ const SendUnifiedScreen = ({
                             placeholderTextColor="#000000"
                             keyboardType="numeric"
                             value={formAmount}
-                            onChangeText={setFormAmount}
+                            onChangeText={handleFormAmountChange}
                           />
                         </View>
 
@@ -1031,7 +1040,7 @@ const SendUnifiedScreen = ({
                           placeholder="Amount"
                           placeholderTextColor="rgba(255, 255, 255, 0.32)"
                           value={formAmount}
-                          onChangeText={setFormAmount}
+                          onChangeText={handleFormAmountChange}
                           keyboardType="numeric"
                           onFocus={() => setFocusedField('listAmount')}
                           onBlur={() => setFocusedField(null)}
@@ -1069,10 +1078,11 @@ const SendUnifiedScreen = ({
             <View style={styles.formSection}>
               {/* Withdraw Amount Input */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Amount</Text>
+                <Text style={[styles.inputLabel, styles.withdrawInputLabel]}>Amount</Text>
                 <View
                   style={[
                     styles.inputWrapper,
+                    styles.withdrawAmountInputWrapper,
                     focusedField === 'withdrawAmount' && styles.inputWrapperFocused,
                   ]}
                 >
@@ -1084,7 +1094,7 @@ const SendUnifiedScreen = ({
                     placeholder="Amount"
                     placeholderTextColor="rgba(255, 255, 255, 0.32)"
                     value={withdrawAmount}
-                    onChangeText={setWithdrawAmount}
+                    onChangeText={handleWithdrawAmountChange}
                     keyboardType="numeric"
                     onFocus={() => setFocusedField('withdrawAmount')}
                     onBlur={() => setFocusedField(null)}
@@ -1093,8 +1103,10 @@ const SendUnifiedScreen = ({
               </View>
 
               {/* Account Destination Section */}
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Account destination</Text>
+              <View style={[styles.inputGroup, styles.withdrawAccountGroup]}>
+                <Text style={[styles.inputLabel, styles.withdrawInputLabel]}>
+                  Account destination
+                </Text>
                 {isLoadingBeneficiaries ? (
                   <View style={styles.accountCard}>
                     <ActivityIndicator size="small" color="#FFD300" />
@@ -1119,27 +1131,48 @@ const SendUnifiedScreen = ({
                         }}
                       >
                         <TouchableOpacity
-                          style={styles.accountCard}
+                          style={[styles.accountCard, isSelected && styles.accountCardSelected]}
                           onPress={() => setSelectedAccountId(account.id)}
                           activeOpacity={0.85}
                         >
                           <View style={styles.accountCardContent}>
                             <View style={styles.accountCardLeft}>
                               <View style={styles.accountInfo}>
-                                <Text style={styles.accountName}>{account.accountName}</Text>
-                                <Text style={styles.accountDetails}>
+                                <Text
+                                  style={[
+                                    styles.accountName,
+                                    !isSelected && styles.accountTextMuted,
+                                  ]}
+                                >
+                                  {account.accountName}
+                                </Text>
+                                <Text
+                                  style={[
+                                    styles.accountDetails,
+                                    !isSelected && styles.accountTextMuted,
+                                  ]}
+                                >
                                   {maskAccountNumber(account.accountNumber)}({account.currency})
                                 </Text>
-                                <Text style={styles.accountBank}>{account.bankName}</Text>
+                                <Text
+                                  style={[
+                                    styles.accountBank,
+                                    !isSelected && styles.accountTextMuted,
+                                  ]}
+                                >
+                                  {account.bankName}
+                                </Text>
                               </View>
                             </View>
+                            {isSelected ? <View style={styles.accountSelectedDot} /> : null}
                           </View>
                         </TouchableOpacity>
                         <PartialGradientBorder
                           width={accountCardDimensions[account.id]?.width || 0}
                           height={accountCardDimensions[account.id]?.height || 0}
-                          borderRadius={12}
+                          borderRadius={8}
                           visible={isSelected}
+                          strokeWidth={1}
                         />
                       </View>
                     );
@@ -1176,6 +1209,7 @@ const SendUnifiedScreen = ({
                       key={user.id}
                       style={[
                         styles.outgoingItem,
+                        isExpanded && styles.outgoingItemExpanded,
                         index < transferUsersWithAmount.length - 1 && styles.outgoingItemGap,
                       ]}
                     >
@@ -1185,7 +1219,7 @@ const SendUnifiedScreen = ({
                         activeOpacity={0.85}
                       >
                         <View style={styles.outgoingAvatar}>
-                          <AvatarComponent width={48} height={48} />
+                          <AvatarComponent width={50} height={50} />
                         </View>
                         <View style={styles.outgoingInfo}>
                           <View style={styles.outgoingUsernameRow}>
@@ -1207,7 +1241,7 @@ const SendUnifiedScreen = ({
                             style={styles.deleteButton}
                             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                           >
-                            <TrashIcon width={20} height={20} />
+                            <TrashIcon width={22} height={22} />
                           </TouchableOpacity>
                         )}
                       </TouchableOpacity>
@@ -1223,7 +1257,7 @@ const SendUnifiedScreen = ({
                               <TextInput
                                 style={styles.editInput}
                                 value={editingAmount}
-                                onChangeText={setEditingAmount}
+                                onChangeText={handleEditingAmountChange}
                                 keyboardType="numeric"
                                 placeholder="Amount"
                                 placeholderTextColor="#6C6B6B"
@@ -1244,10 +1278,10 @@ const SendUnifiedScreen = ({
                           </View>
 
                           <TouchableOpacity
-                            style={styles.saveButton}
+                            style={styles.saveNewButton}
                             onPress={() => handleUpdateUser(user.id)}
                           >
-                            <Text style={styles.saveButtonText}>Save</Text>
+                            <Text style={styles.saveNewButtonText}>Save</Text>
                           </TouchableOpacity>
                         </View>
                       )}
@@ -1497,6 +1531,10 @@ const styles = StyleSheet.create({
     padding: 12,
     borderCurve: 'continuous',
   },
+  outgoingItemExpanded: {
+    borderRadius: 12,
+    padding: 16,
+  },
   outgoingItemGap: {
     marginBottom: 12,
   },
@@ -1561,30 +1599,26 @@ const styles = StyleSheet.create({
   },
   expandedEditView: {
     marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
   },
   editField: {
     marginBottom: 16,
   },
   editFieldLabel: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#0F0F0F',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_400Regular',
     marginBottom: 8,
   },
   editInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 48,
+    gap: 10,
   },
-  editInputIcon: {
-    marginRight: 8,
-  },
+  editInputIcon: {},
   editInput: {
     flex: 1,
     fontSize: 16,
@@ -1593,9 +1627,9 @@ const styles = StyleSheet.create({
   },
   editNarrationInput: {
     backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     fontSize: 16,
     color: '#0F0F0F',
     fontFamily: 'Montserrat_400Regular',
@@ -1625,6 +1659,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_400Regular',
     marginBottom: 8,
   },
+  withdrawInputLabel: {
+    fontSize: 20,
+  },
+  withdrawAccountGroup: {
+    marginTop: 24,
+  },
+  withdrawAmountInputWrapper: {
+    height: 48,
+    borderRadius: 8,
+  },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1643,7 +1687,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 20,
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
   },
@@ -1863,46 +1907,47 @@ const styles = StyleSheet.create({
   },
   inlineModalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 6,
     paddingVertical: 20,
     paddingHorizontal: 20,
     width: '80%',
     alignItems: 'center',
   },
   inlineModalTitle: {
-    fontSize: 16,
+    fontSize: 18,
+    lineHeight: 32,
     color: '#000000',
     fontFamily: 'Montserrat_400Regular',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   inlineModalButtonsRow: {
     flexDirection: 'row',
-    width: '70%',
-    gap: 12,
+    width: '85%',
+    gap: 10,
   },
   inlineModalButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   inlineModalPrimary: {
-    backgroundColor: '#FFD300',
+    backgroundColor: '#000000',
   },
   inlineModalPrimaryText: {
     fontSize: 16,
-    color: '#000000',
-    fontFamily: 'Montserrat_600SemiBold',
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_700Bold',
   },
   inlineModalSecondary: {
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#000000',
   },
   inlineModalSecondaryText: {
     fontSize: 16,
-    color: '#000000',
-    fontFamily: 'Montserrat_600SemiBold',
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_700Bold',
   },
   accountCardWrapper: {
     position: 'relative',
@@ -1910,12 +1955,14 @@ const styles = StyleSheet.create({
   },
   accountCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.06)',
+    minHeight: 88,
   },
+  accountCardSelected: {},
   accountCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1931,19 +1978,31 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   accountName: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#FFFFFF',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_400Regular',
   },
   accountDetails: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16,
+    color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
   },
   accountBank: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16,
+    color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
+  },
+  accountTextMuted: {
+    color: 'rgba(255, 255, 255, 0.32)',
+  },
+  accountSelectedDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    backgroundColor: '#FFD300',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    marginLeft: 20,
   },
   linkAccountButton: {
     flexDirection: 'row',
@@ -1958,7 +2017,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   linkAccountButtonText: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#6C6B6B',
     fontFamily: 'Montserrat_600SemiBold',
   },
@@ -2022,6 +2081,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
+    marginTop: 16,
   },
   newTransferHeader: {
     flexDirection: 'row',

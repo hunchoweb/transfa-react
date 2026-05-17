@@ -35,7 +35,7 @@ import { QRShareCard } from '@/components/QRShareCard';
 import { uploadImage, type UploadImageAsset } from '@/api/supabaseClient';
 import type { PaymentRequest, UserDiscoveryResult } from '@/types/api';
 import type { AppNavigationProp } from '@/types/navigation';
-import { formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
+import { formatAmountInput, formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
 import { normalizeUsername, usernameKey } from '@/utils/username';
 import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -470,6 +470,10 @@ const ReceiveUnifiedScreen = ({
   const handleCopyLink = async () => {
     await Clipboard.setStringAsync(myLinkUrl);
     Alert.alert('Copied', 'Link copied to clipboard');
+  };
+
+  const handleAmountChange = (value: string) => {
+    setAmount(formatAmountInput(value));
   };
 
   const handleShareLink = async () => {
@@ -1160,7 +1164,7 @@ const ReceiveUnifiedScreen = ({
                     placeholder="Amount"
                     placeholderTextColor="rgba(255, 255, 255, 0.32)"
                     value={amount}
-                    onChangeText={setAmount}
+                    onChangeText={handleAmountChange}
                     keyboardType="numeric"
                     onFocus={() => setFocusedInput('amount')}
                     onBlur={() => setFocusedInput(null)}

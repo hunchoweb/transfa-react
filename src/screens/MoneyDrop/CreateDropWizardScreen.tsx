@@ -9,7 +9,7 @@ import DashedRectBorder from '@/components/DashedRectBorder';
 import PinInputModal from '@/components/PinInputModal';
 import { useSecureAction } from '@/hooks/useSecureAction';
 import type { AppNavigationProp } from '@/types/navigation';
-import { formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
+import { formatAmountInput, formatCurrency, nairaToKobo } from '@/utils/formatCurrency';
 import { useNavigation } from '@react-navigation/native';
 import React, { useMemo, useState } from 'react';
 import {
@@ -221,6 +221,10 @@ const CreateDropWizardScreen = () => {
     }
   };
 
+  const handleTotalAmountChange = (value: string) => {
+    setTotalAmountInput(formatAmountInput(value));
+  };
+
   const openConfirmAndCreate = () => {
     const validationError = validateForm();
     if (validationError) {
@@ -344,7 +348,7 @@ const CreateDropWizardScreen = () => {
                 placeholderTextColor="#6C6B6B"
                 keyboardType="decimal-pad"
                 value={totalAmountInput}
-                onChangeText={setTotalAmountInput}
+                onChangeText={handleTotalAmountChange}
               />
             </View>
           </View>

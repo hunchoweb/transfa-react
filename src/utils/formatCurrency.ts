@@ -21,6 +21,30 @@ export const formatCurrency = (amountInKobo: number): string => {
 };
 
 /**
+ * Formats user-entered naira text with comma grouping while preserving decimals.
+ * @param value - Raw amount input text
+ * @returns Input-safe amount text (e.g., "125000.50" -> "125,000.50")
+ */
+export const formatAmountInput = (value: string): string => {
+  const sanitized = value.replace(/,/g, '').replace(/[^\d.]/g, '');
+
+  if (!sanitized) {
+    return '';
+  }
+
+  const [rawIntegerPart = '', ...rawDecimalParts] = sanitized.split('.');
+  const hasDecimal = sanitized.includes('.');
+  const integerPart = rawIntegerPart.replace(/^0+(?=\d)/, '');
+  const groupedInteger = (integerPart || (hasDecimal ? '0' : '')).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ','
+  );
+  const decimalPart = rawDecimalParts.join('').slice(0, 2);
+
+  return hasDecimal ? `${groupedInteger}.${decimalPart}` : groupedInteger;
+};
+
+/**
  * Converts a naira amount to kobo
  * @param nairaAmount - The amount in naira
  * @returns The amount in kobo
