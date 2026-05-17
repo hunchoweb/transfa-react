@@ -1,4 +1,5 @@
 import BackIcon from '@/assets/icons/back.svg';
+import BetweenIcon from '@/assets/icons/between.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
 import Avatar from '@/assets/images/avatar.svg';
 import Avatar1 from '@/assets/images/avatar1.svg';
@@ -100,9 +101,7 @@ const RequestPaymentSummaryScreen = () => {
           </View>
 
           <View style={styles.arrowContainer}>
-            <View style={styles.arrowDot} />
-            <View style={styles.arrowDot} />
-            <View style={styles.arrowDot} />
+            <BetweenIcon width={54} height={8} />
           </View>
 
           <View style={styles.userProfile}>
@@ -239,22 +238,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   profileUsername: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
+    textAlign: 'center',
   },
   arrowContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
     marginHorizontal: 8,
-  },
-  arrowDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFFFFF',
-    opacity: 0.5,
   },
   detailsCard: {
     backgroundColor: '#333333',
