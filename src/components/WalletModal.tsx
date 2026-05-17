@@ -1,4 +1,4 @@
-import BankIcon from '@/assets/icons/bank.svg';
+import BankNameIcon from '@/assets/icons/bank-name.svg';
 import CardIcon from '@/assets/icons/card.svg';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletModalIllustration from '@/assets/images/wallet-modal.svg';
@@ -7,6 +7,8 @@ import React from 'react';
 import { Alert, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const MODAL_MAX_WIDTH = 335;
+const ILLUSTRATION_PADDING = 3;
 
 interface WalletModalProps {
   visible: boolean;
@@ -26,10 +28,11 @@ export default function WalletModal({
     Alert.alert('Copied', 'Account number copied to clipboard');
   };
 
-  const svgWidth = SCREEN_WIDTH - 40;
+  const modalWidth = Math.min(SCREEN_WIDTH - 40, MODAL_MAX_WIDTH);
+  const svgWidth = modalWidth - ILLUSTRATION_PADDING * 2;
   const svgHeight = svgWidth * (340 / 334);
-  // White space starts at y=159.667 in a 340px tall SVG (47% from top)
   const whiteSpaceStart = svgHeight * (159.667 / 340);
+  const accountDetailsTop = whiteSpaceStart + ILLUSTRATION_PADDING;
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide" onRequestClose={onClose}>
@@ -41,25 +44,27 @@ export default function WalletModal({
         >
           {/* Header Illustration */}
           <View style={styles.header}>
-            <WalletModalIllustration width={svgWidth} height={svgHeight} />
+            <View style={styles.illustrationFrame}>
+              <WalletModalIllustration width={svgWidth} height={svgHeight} />
+            </View>
             {/* Extended white background to cover all content */}
             <View
               style={[
                 styles.whiteBackgroundExtension,
                 {
-                  top: whiteSpaceStart,
+                  top: accountDetailsTop,
                   height: 400,
                 },
               ]}
             />
             {/* Account Details positioned over white space */}
-            <View style={[styles.accountDetailsContainer, { top: whiteSpaceStart }]}>
+            <View style={[styles.accountDetailsContainer, { top: accountDetailsTop }]}>
               {/* Bank Name Field */}
               <View style={styles.field}>
                 <Text style={styles.label}>Bank Name</Text>
                 <View style={styles.inputContainer}>
                   <View style={styles.inputIcon}>
-                    <BankIcon width={20} height={20} />
+                    <BankNameIcon width={20} height={20} />
                   </View>
                   <Text style={styles.inputText}>{bankName}</Text>
                 </View>
@@ -95,13 +100,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   content: {
     backgroundColor: '#FFFFFF',
     borderRadius: 6,
     width: '100%',
-    maxWidth: 335,
+    maxWidth: MODAL_MAX_WIDTH,
     overflow: 'hidden',
   },
   header: {
@@ -110,6 +115,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     position: 'relative',
     minHeight: 460,
+  },
+  illustrationFrame: {
+    marginTop: ILLUSTRATION_PADDING,
+    borderRadius: 6,
+    overflow: 'hidden',
   },
   whiteBackgroundExtension: {
     position: 'absolute',
@@ -132,7 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#6C6B6B',
     fontFamily: 'Montserrat_400Regular',
     marginBottom: 8,
@@ -140,8 +150,8 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    borderRadius: 8,
+    paddingHorizontal: 14,
     paddingVertical: 14,
     borderWidth: 1.5,
     borderStyle: 'dashed',
@@ -152,16 +162,16 @@ const styles = StyleSheet.create({
   },
   inputText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 18,
     color: '#000000',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_700Bold',
   },
   copyButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFD300',
-    borderRadius: 12,
+    borderRadius: 10,
     paddingVertical: 18,
     paddingHorizontal: 24,
     marginHorizontal: 20,
@@ -171,6 +181,6 @@ const styles = StyleSheet.create({
   copyButtonText: {
     fontSize: 16,
     color: '#000000',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_700Bold',
   },
 });
