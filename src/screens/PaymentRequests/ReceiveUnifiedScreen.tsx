@@ -907,7 +907,7 @@ const ReceiveUnifiedScreen = ({
                 style={styles.historyButton}
                 onPress={() => navigation.navigate('PaymentRequestHistory')}
               >
-                <Text style={styles.historyButtonText}>Show more</Text>
+                <Text style={styles.historyButtonText}>Request History</Text>
               </TouchableOpacity>
             </View>
 
@@ -1065,7 +1065,7 @@ const ReceiveUnifiedScreen = ({
                     <View style={[styles.searchResultCard, styles.selectedRecipientCard]}>
                       <View style={styles.searchResultAvatarWrap}>
                         {SelectedRecipientAvatar ? (
-                          <SelectedRecipientAvatar width={40} height={40} />
+                          <SelectedRecipientAvatar width={50} height={50} />
                         ) : null}
                       </View>
                       <View style={styles.searchResultTextWrap}>
@@ -1110,7 +1110,7 @@ const ReceiveUnifiedScreen = ({
                               activeOpacity={0.86}
                             >
                               <View style={styles.searchResultAvatarWrap}>
-                                <UserAvatarComponent width={40} height={40} />
+                                <UserAvatarComponent width={50} height={50} />
                               </View>
                               <View style={styles.searchResultTextWrap}>
                                 <Text style={styles.searchResultUsername}>{userName}</Text>
@@ -1226,7 +1226,7 @@ const ReceiveUnifiedScreen = ({
                     <DashedRectBorder
                       width={uploadAreaDimensions.width}
                       height={uploadAreaDimensions.height}
-                      borderRadius={12}
+                      borderRadius={8}
                       borderWidth={2}
                       color="#6C6B6B"
                       dashCount={150}
@@ -1419,10 +1419,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     color: '#FFFFFF',
-    fontFamily: 'Montserrat_600SemiBold',
-    marginBottom: 16,
+    fontFamily: 'Montserrat_400Regular',
   },
   historyButton: {
     backgroundColor: '#333333',
@@ -1433,9 +1432,9 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.06)',
   },
   historyButtonText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#FFFFFF',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_400Regular',
   },
   requestsList: {
     gap: 12,
@@ -1446,11 +1445,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 16,
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
   requestLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 12,
     flex: 1,
   },
@@ -1474,7 +1472,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 8,
-    marginTop: 4,
   },
   requestName: {
     fontSize: 18,
@@ -1607,7 +1604,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   formFieldLabel: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
     marginBottom: 8,
@@ -1616,12 +1613,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#333333',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 48,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.06)',
-    minHeight: 56,
+    gap: 10,
   },
   formInputWrapperFocused: {
     borderColor: 'rgba(255, 211, 0, 0.5)',
@@ -1632,17 +1629,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
   },
-  nairaIconContainer: {
-    marginRight: 8,
-  },
-  usernameIconContainer: {
-    marginRight: 8,
-  },
+  nairaIconContainer: {},
+  usernameIconContainer: {},
   formTextAreaWrapper: {
     backgroundColor: '#333333',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.06)',
     minHeight: 100,
@@ -1660,7 +1653,7 @@ const styles = StyleSheet.create({
   },
   uploadArea: {
     backgroundColor: '#333333',
-    borderRadius: 12,
+    borderRadius: 8,
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1813,18 +1806,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   searchResultCard: {
-    minHeight: 60,
     borderRadius: 10,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
+    borderCurve: 'continuous',
   },
   searchResultAvatarWrap: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     borderRadius: 10,
     overflow: 'hidden',
     justifyContent: 'center',
@@ -1832,16 +1824,17 @@ const styles = StyleSheet.create({
   },
   searchResultTextWrap: {
     flex: 1,
+    justifyContent: 'center',
+    gap: 3,
   },
   searchResultUsername: {
-    fontSize: 15,
-    color: '#17181B',
+    fontSize: 18,
+    color: '#000000',
     fontFamily: 'Montserrat_700Bold',
   },
   searchResultFullName: {
-    marginTop: 1,
-    color: '#5F6268',
-    fontSize: 12,
+    color: '#000000',
+    fontSize: 16,
     fontFamily: 'Montserrat_400Regular',
   },
   searchResultsState: {
@@ -1854,8 +1847,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   selectedRecipientCard: {
-    marginTop: 10,
-    minHeight: 60,
+    marginTop: 16,
   },
   selectedRecipientUsernameRow: {
     flexDirection: 'row',

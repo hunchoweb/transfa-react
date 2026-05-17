@@ -18,6 +18,7 @@ import { useDeletePaymentRequest, useGetPaymentRequest } from '@/api/transaction
 import { AppStackParamList } from '@/navigation/AppStack';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { normalizeUsername } from '@/utils/username';
+import { BlurView } from 'expo-blur';
 import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as MediaLibrary from 'expo-media-library';
@@ -117,6 +118,7 @@ const PaymentRequestSuccessScreen = () => {
 
   const qrCodeRef = React.useRef<any>(null);
   const [isDownloading, setIsDownloading] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
   const {
     data: request,
@@ -215,15 +217,46 @@ const PaymentRequestSuccessScreen = () => {
       return;
     }
 
-    Alert.alert('Delete Request', 'Are you sure you want to delete this request?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => deleteRequest({ requestId: request.id }),
-      },
-    ]);
+    setShowDeleteModal(true);
   };
+
+  const onConfirmDelete = () => {
+    if (!request) {
+      return;
+    }
+
+    setShowDeleteModal(false);
+    deleteRequest({ requestId: request.id });
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
+  const renderDeleteModal = () =>
+    showDeleteModal ? (
+      <BlurView intensity={10} tint="dark" style={styles.inlineModalOverlay}>
+        <View style={styles.inlineModalCard}>
+          <Text style={styles.inlineModalTitle}>Are you sure you want to delete request?</Text>
+          <View style={styles.inlineModalButtonsRow}>
+            <TouchableOpacity
+              style={[styles.inlineModalButton, styles.inlineModalPrimary]}
+              onPress={onConfirmDelete}
+              disabled={isDeleting}
+            >
+              <Text style={styles.inlineModalPrimaryText}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.inlineModalButton, styles.inlineModalSecondary]}
+              onPress={onCancelDelete}
+              disabled={isDeleting}
+            >
+              <Text style={styles.inlineModalSecondaryText}>No</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </BlurView>
+    ) : null;
 
   if (isLoading) {
     return (
@@ -385,12 +418,12 @@ const PaymentRequestSuccessScreen = () => {
             onPress={onDelete}
             disabled={isDeleting}
           >
-            <TrashIcon width={20} height={20} />
             <Text style={styles.deleteButtonText}>
               {isDeleting ? 'Deleting...' : 'Delete Request'}
             </Text>
           </TouchableOpacity>
         </ScrollView>
+        {renderDeleteModal()}
       </SafeAreaView>
     );
   }
@@ -491,6 +524,7 @@ const PaymentRequestSuccessScreen = () => {
             {isDeleting ? 'Deleting...' : 'Delete request'}
           </Text>
         </TouchableOpacity>
+        {renderDeleteModal()}
       </View>
     </SafeAreaView>
   );
@@ -747,7 +781,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   deleteButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#FF3737',
     fontFamily: 'Montserrat_700Bold',
   },
@@ -968,6 +1002,62 @@ const styles = StyleSheet.create({
   deleteRequestButtonText: {
     fontSize: 16,
     color: '#000000',
+    fontFamily: 'Montserrat_700Bold',
+  },
+  inlineModalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    zIndex: 40,
+  },
+  inlineModalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 6,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  inlineModalTitle: {
+    fontSize: 18,
+    lineHeight: 32,
+    color: '#000000',
+    fontFamily: 'Montserrat_400Regular',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  inlineModalButtonsRow: {
+    flexDirection: 'row',
+    width: '85%',
+    gap: 10,
+  },
+  inlineModalButton: {
+    flex: 1,
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inlineModalPrimary: {
+    backgroundColor: '#000000',
+  },
+  inlineModalPrimaryText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_700Bold',
+  },
+  inlineModalSecondary: {
+    backgroundColor: '#000000',
+  },
+  inlineModalSecondaryText: {
+    fontSize: 16,
+    color: '#FFFFFF',
     fontFamily: 'Montserrat_700Bold',
   },
 

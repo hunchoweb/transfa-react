@@ -363,11 +363,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 16,
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
   requestLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 12,
     flex: 1,
   },
@@ -391,7 +390,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 8,
-    marginTop: 4,
   },
   requestName: {
     fontSize: 18,
