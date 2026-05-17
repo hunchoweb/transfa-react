@@ -105,16 +105,18 @@ const avatarIndexFromSeed = (seed: string) => {
 };
 
 const maskAccountNumber = (accountNumber: string) => {
-  if (accountNumber.includes('*')) {
-    return accountNumber;
+  const normalized = accountNumber.trim();
+  if (normalized.includes('*')) {
+    const visibleStart = normalized.slice(0, 3);
+    const visibleEnd = normalized.slice(-2);
+    return `${visibleStart}*****${visibleEnd}`;
   }
-  if (accountNumber.length <= 3) {
-    return accountNumber;
+  if (normalized.length <= 5) {
+    return normalized;
   }
-  const firstThree = accountNumber.slice(0, 3);
-  const lastTwo = accountNumber.slice(-2);
-  const masked = '*'.repeat(accountNumber.length - 5);
-  return `${firstThree}${masked}${lastTwo}`;
+  const firstThree = normalized.slice(0, 3);
+  const lastTwo = normalized.slice(-2);
+  return `${firstThree}*****${lastTwo}`;
 };
 
 const buildWithdrawalDescription = (bankName: string) => {
@@ -827,7 +829,9 @@ const PaymentVerificationScreen = () => {
         </View>
 
         <View style={styles.transactionSection}>
-          <View style={styles.userContainer}>
+          <View
+            style={[styles.userContainer, intent === 'withdraw' && styles.compactPinUserContainer]}
+          >
             <View style={styles.avatarWrapper}>
               <View style={styles.avatarContainer}>
                 <Avatar width={64} height={64} />
@@ -836,22 +840,29 @@ const PaymentVerificationScreen = () => {
                 <VerifiedBadge width={20} height={20} />
               </View>
             </View>
-            <Text style={styles.username}>{senderUsername}</Text>
+            <Text style={[styles.username]}>{senderUsername}</Text>
           </View>
 
-          <View style={styles.arrowContainer}>
+          <View
+            style={[
+              styles.arrowContainer,
+              intent === 'withdraw' && styles.compactPinArrowContainer,
+            ]}
+          >
             <BetweenIcon width={54} height={8} />
           </View>
 
-          <View style={styles.userContainer}>
+          <View
+            style={[styles.userContainer, intent === 'withdraw' && styles.compactPinUserContainer]}
+          >
             {intent === 'withdraw' && withdrawParams ? (
               <>
                 <View style={styles.avatarWrapper}>
                   <View style={styles.bankIconContainer}>
-                    <BankIcon width={64} height={64} />
+                    <BankIcon width={24} height={24} />
                   </View>
                 </View>
-                <Text style={styles.username}>
+                <Text style={[styles.username]}>
                   {maskAccountNumber(withdrawParams.accountNumberMasked)}
                 </Text>
               </>
@@ -1081,6 +1092,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  compactPinUserContainer: {
+    flex: 0,
+    width: 124,
+  },
   avatarWrapper: {
     position: 'relative',
     marginBottom: 12,
@@ -1094,14 +1109,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   bankIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#FFD300',
+    width: 64,
+    height: 64,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFE5F0',
+    backgroundColor: '#F3ABA7',
     overflow: 'hidden',
   },
   listIconContainer: {
@@ -1127,9 +1140,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   username: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#FFFFFF',
-    fontFamily: 'Montserrat_600SemiBold',
+    fontFamily: 'Montserrat_400Regular',
     textAlign: 'center',
   },
   arrowContainer: {
@@ -1137,6 +1150,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 8,
+  },
+  compactPinArrowContainer: {
+    width: 44,
+    paddingHorizontal: 0,
   },
   groupAvatarWrapper: {
     marginBottom: 12,
