@@ -1,6 +1,6 @@
 import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
-import Recieve from '@/assets/icons/recieve.svg';
-import Send from '@/assets/icons/send.svg';
+import RequestIcon from '@/assets/icons/request.svg';
+import WalletSendIcon from '@/assets/icons/wallet-send.svg';
 import ShareIcon from '@/assets/icons/Share1.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
 import { moderateScale, scale, verticalScale } from '@/utils/responsive';
@@ -259,7 +259,7 @@ export default function UserProfileModal({
               onPress={handleSend}
             >
               <View style={styles.actionButtonIcon}>
-                <Send width={24} height={24} color="#ffffff" />
+                <WalletSendIcon width={28} height={28} color="#ffffff" />
               </View>
               <Text style={styles.actionButtonText}>Send</Text>
             </Pressable>
@@ -268,7 +268,7 @@ export default function UserProfileModal({
               onPress={handleRequest}
             >
               <View style={styles.actionButtonIcon}>
-                <Recieve width={24} height={24} color="#ffffff" />
+                <RequestIcon width={28} height={28} color="#ffffff" />
               </View>
               <Text style={styles.actionButtonText}>Request</Text>
             </Pressable>
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: moderateScale(17),
     color: '#ffffff',
-    fontFamily: 'Montserrat_500Medium',
+    fontFamily: 'Montserrat_400Regular',
   },
   transactionSection: {
     flex: 1,

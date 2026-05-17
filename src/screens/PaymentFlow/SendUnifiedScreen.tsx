@@ -1195,7 +1195,7 @@ const SendUnifiedScreen = ({
                 <Text style={styles.outgoingTitle}>Outgoing transfers</Text>
                 {transferUsersWithAmount.map((user, index) => {
                   const isExpanded = expandedUserId === user.id;
-                  const AvatarComponent = avatarComponents[user.avatarIndex] || Avatar;
+                  const AvatarComponent = avatarComponents[user.avatarIndex] || AvatarDefaultIcon;
 
                   return (
                     <View
@@ -1317,8 +1317,8 @@ const SendUnifiedScreen = ({
                 const member = listMembers.find((m) => m.id === user.id);
                 const AvatarComponent =
                   typeof member?.avatarIndex === 'number'
-                    ? avatarComponents[member.avatarIndex] || Avatar
-                    : avatarComponents[user.avatarIndex] || Avatar;
+                    ? avatarComponents[member.avatarIndex] || AvatarDefaultIcon
+                    : avatarComponents[user.avatarIndex] || AvatarDefaultIcon;
 
                 return (
                   <View key={user.id} style={styles.listUserCard}>

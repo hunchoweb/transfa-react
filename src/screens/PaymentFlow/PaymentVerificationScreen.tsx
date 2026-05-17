@@ -827,7 +827,7 @@ const PaymentVerificationScreen = () => {
           >
             <View style={styles.avatarWrapper}>
               <View style={styles.avatarContainer}>
-                <Avatar width={64} height={64} />
+                <AvatarDefaultIcon width={64} height={64} />
               </View>
               <View style={styles.badgeIcon}>
                 <VerifiedBadge width={20} height={20} />
