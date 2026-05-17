@@ -7,9 +7,7 @@ import RequestIcon from '@/assets/icons/request.svg';
 import SettingsIcon from '@/assets/icons/settings.svg';
 import SystemIcon from '@/assets/icons/system.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
@@ -49,15 +47,10 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 
 type AvatarComponent = React.ComponentType<{ width?: number; height?: number }>;
 
-const avatarPool: AvatarComponent[] = [Avatar1, Avatar2, Avatar3];
+const avatarPool: AvatarComponent[] = [AvatarDefaultIcon];
 
 const pickAvatarComponent = (seed: string): AvatarComponent => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-
-  return avatarPool[Math.abs(hash) % avatarPool.length] || Avatar1;
+  return AvatarDefaultIcon;
 };
 
 const formatAmountFromKobo = (amountKobo?: number) => {

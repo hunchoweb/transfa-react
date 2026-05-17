@@ -11,10 +11,7 @@ import TrashIcon from '@/assets/icons/trash.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
 import WalletPlusIcon from '@/assets/icons/wallet.svg';
 import WithdrawIcon from '@/assets/icons/withdraw.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import AvatarAlt1 from '@/assets/images/avatar1.svg';
-import AvatarAlt2 from '@/assets/images/avatar2.svg';
-import AvatarAlt3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import PartialGradientBorder from '@/components/PartialGradientBorder';
 import WalletModal from '@/components/WalletModal';
 import { useNavigation } from '@react-navigation/native';
@@ -62,7 +59,7 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 </defs>
 </svg>`;
 
-const avatarComponents = [Avatar, AvatarAlt1, AvatarAlt2, AvatarAlt3];
+const avatarComponents = [AvatarDefaultIcon];
 const MAX_RECIPIENTS = 10;
 
 interface TransferUser {
@@ -109,11 +106,7 @@ interface SendUnifiedScreenProps {
 const NARRATION_CHIPS = ['Gift', 'Payment', 'Refund', 'Rent', 'School Fees', 'Food'];
 
 const avatarIndexFromSeed = (seed: string) => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-  return Math.abs(hash) % avatarComponents.length;
+  return 0;
 };
 
 const parseAmountInputToKobo = (value: string) => {
@@ -718,7 +711,7 @@ const SendUnifiedScreen = ({
             <View style={styles.header}>
               <View style={styles.headerLeft}>
                 <View>
-                  <Avatar width={44} height={44} />
+                  <AvatarDefaultIcon width={44} height={44} />
                 </View>
                 <View style={styles.usernameWrapper}>
                   <View style={styles.usernameRow}>

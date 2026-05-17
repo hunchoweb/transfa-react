@@ -1,8 +1,7 @@
 import BackIcon from '@/assets/icons/back.svg';
 import BetweenIcon from '@/assets/icons/between.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
@@ -92,7 +91,7 @@ const RequestPaymentSummaryScreen = () => {
         <View style={styles.userProfiles}>
           <View style={styles.userProfile}>
             <View style={styles.avatarContainer}>
-              <Avatar width={64} height={64} />
+              <AvatarDefaultIcon width={64} height={64} />
               <View style={styles.verifiedBadgeContainer}>
                 <VerifiedBadge width={20} height={20} />
               </View>
@@ -106,7 +105,7 @@ const RequestPaymentSummaryScreen = () => {
 
           <View style={styles.userProfile}>
             <View style={styles.avatarContainer}>
-              <Avatar1 width={64} height={64} />
+              <AvatarDefaultIcon width={64} height={64} />
             </View>
             <Text style={styles.profileUsername}>{receiverUsername}</Text>
           </View>

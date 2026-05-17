@@ -3,10 +3,6 @@ import Recieve from '@/assets/icons/recieve.svg';
 import Send from '@/assets/icons/send.svg';
 import ShareIcon from '@/assets/icons/Share1.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
 import { moderateScale, scale, verticalScale } from '@/utils/responsive';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { BlurView } from 'expo-blur';
@@ -51,10 +47,10 @@ interface UserProfileModalProps {
 }
 
 const avatarMap: Record<AvatarKey, React.ComponentType<{ width?: number; height?: number }>> = {
-  avatar: Avatar,
-  avatar1: Avatar1,
-  avatar2: Avatar2,
-  avatar3: Avatar3,
+  avatar: AvatarDefaultIcon,
+  avatar1: AvatarDefaultIcon,
+  avatar2: AvatarDefaultIcon,
+  avatar3: AvatarDefaultIcon,
 };
 
 const formatAmount = (amount: number) => {
@@ -73,8 +69,8 @@ const TransactionItem = React.memo(
     AvatarComponent: React.ComponentType<{ width?: number; height?: number }>;
   }) => {
     const isFromCurrentUser = transaction.type === 'sent';
-    const SenderAvatar = isFromCurrentUser ? Avatar : AvatarComponent;
-    const ReceiverAvatar = isFromCurrentUser ? AvatarComponent : Avatar;
+    const SenderAvatar = isFromCurrentUser ? AvatarDefaultIcon : AvatarComponent;
+    const ReceiverAvatar = isFromCurrentUser ? AvatarComponent : AvatarDefaultIcon;
 
     return (
       <View style={styles.transactionItem}>
@@ -309,7 +305,7 @@ export default function UserProfileModal({
                 renderItem={({ item }: { item: UserProfileModalTransaction }) => (
                   <TransactionItem
                     transaction={item}
-                    AvatarComponent={AvatarComponent || Avatar1}
+                    AvatarComponent={AvatarComponent || AvatarDefaultIcon}
                   />
                 )}
                 showsVerticalScrollIndicator={false}

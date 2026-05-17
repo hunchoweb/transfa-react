@@ -16,10 +16,7 @@ import ShareIcon from '@/assets/icons/share.svg';
 import UsernameIcon from '@/assets/icons/username.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
 import WalletPlusIcon from '@/assets/icons/wallet.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import Logo from '@/assets/images/logo.svg';
 import { useUserSearch } from '@/api/userDiscoveryApi';
 import {
@@ -81,7 +78,7 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 
 type AvatarComponent = React.ComponentType<{ width?: number; height?: number }>;
 
-const avatarPool: AvatarComponent[] = [Avatar1, Avatar2, Avatar3];
+const avatarPool: AvatarComponent[] = [AvatarDefaultIcon];
 
 type RequestType = 'general' | 'individual';
 type ActiveButton = 'link' | 'request';
@@ -95,11 +92,7 @@ interface ReceiveUnifiedScreenProps {
 }
 
 const pickAvatarComponent = (seed: string): AvatarComponent => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-  return avatarPool[Math.abs(hash) % avatarPool.length] || Avatar1;
+  return AvatarDefaultIcon;
 };
 
 const formatRequestDate = (isoDate: string) =>
@@ -742,7 +735,7 @@ const ReceiveUnifiedScreen = ({
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <View>
-                <Avatar width={44} height={44} />
+                <AvatarDefaultIcon width={44} height={44} />
               </View>
               <View style={styles.usernameWrapper}>
                 <View style={styles.usernameRow}>

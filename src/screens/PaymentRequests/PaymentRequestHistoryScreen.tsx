@@ -7,9 +7,7 @@ import RequestIcon from '@/assets/icons/request.svg';
 import SearchIcon from '@/assets/icons/search.svg';
 import SettingsIcon from '@/assets/icons/settings.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import { useListPaymentRequests } from '@/api/transactionApi';
 import DashedBorder from '@/components/DashedBorder';
 import { AppStackParamList } from '@/navigation/AppStack';
@@ -50,15 +48,10 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 type AvatarComponent = React.ComponentType<{ width?: number; height?: number }>;
 type NormalizedRequestStatus = 'declined' | 'paid' | 'pending';
 
-const avatarPool: AvatarComponent[] = [Avatar1, Avatar2, Avatar3];
+const avatarPool: AvatarComponent[] = [AvatarDefaultIcon];
 
 const pickAvatarComponent = (seed: string): AvatarComponent => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-
-  return avatarPool[Math.abs(hash) % avatarPool.length] || Avatar1;
+  return AvatarDefaultIcon;
 };
 
 const normalizeRequestStatus = (

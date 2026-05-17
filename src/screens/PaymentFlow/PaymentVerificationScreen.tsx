@@ -2,10 +2,7 @@ import BackIcon from '@/assets/icons/back.svg';
 import BankIcon from '@/assets/icons/bank.svg';
 import BetweenIcon from '@/assets/icons/between.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import AvatarAlt1 from '@/assets/images/avatar1.svg';
-import AvatarAlt2 from '@/assets/images/avatar2.svg';
-import AvatarAlt3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import ProcessIllustration from '@/assets/images/processing.png';
 import {
   fetchTransactionStatus,
@@ -59,7 +56,7 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 </defs>
 </svg>`;
 
-const avatarComponents = [Avatar, AvatarAlt1, AvatarAlt2, AvatarAlt3];
+const avatarComponents = [AvatarDefaultIcon];
 const rnBiometrics = new ReactNativeBiometrics();
 type VerificationRoute =
   | RouteProp<AppStackParamList, 'PaymentVerification'>
@@ -94,14 +91,10 @@ interface VerificationResult {
   failures: BulkP2PTransferFailure[];
 }
 
-const getAvatarComponent = (index?: number) => avatarComponents[index ?? 0] || Avatar;
+const getAvatarComponent = (index?: number) => AvatarDefaultIcon;
 
 const avatarIndexFromSeed = (seed: string) => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-  return Math.abs(hash) % avatarComponents.length;
+  return 0;
 };
 
 const maskAccountNumber = (accountNumber: string) => {

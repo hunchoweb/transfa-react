@@ -1,9 +1,7 @@
 import BackIcon from '@/assets/icons/back.svg';
 import SearchIcon from '@/assets/icons/search-normal.svg';
 import VerifiedBadge from '@/assets/icons/verified.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import * as Haptics from 'expo-haptics';
 import { StatusBar } from 'expo-status-bar';
 import React, { memo, useCallback, useMemo, useState } from 'react';
@@ -42,19 +40,10 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 </defs>
 </svg>`;
 
-const avatarOptions = [Avatar1, Avatar2, Avatar3] as const;
+const avatarOptions = [AvatarDefaultIcon];
 
 const resolveAvatar = (seed: string) => {
-  if (!seed) {
-    return avatarOptions[0];
-  }
-
-  let hash = 0;
-  for (let index = 0; index < seed.length; index += 1) {
-    hash += seed.charCodeAt(index) * (index + 1);
-  }
-
-  return avatarOptions[hash % avatarOptions.length];
+  return AvatarDefaultIcon;
 };
 
 const SearchUserItem = memo(

@@ -21,10 +21,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Avatar from '@/assets/images/avatar.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
+import AvatarDefaultIcon from '@/assets/icons/avatar-default.svg';
 import { SvgXml } from 'react-native-svg';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -39,17 +36,13 @@ const backgroundSvg = `<svg width="375" height="812" viewBox="0 0 375 812" fill=
 </defs>
 </svg>`;
 
-const avatarComponents = [Avatar, Avatar1, Avatar2, Avatar3];
+const avatarComponents = [AvatarDefaultIcon];
 
 const avatarIndexFromSeed = (seed: string) => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000007;
-  }
-  return Math.abs(hash) % avatarComponents.length;
+  return 0;
 };
 
-const getAvatarComponent = (index: number) => avatarComponents[index] || Avatar;
+const getAvatarComponent = (index: number) => AvatarDefaultIcon;
 
 type ScreenRoute = RouteProp<AppStackParamList, 'TransferListDetail'>;
 

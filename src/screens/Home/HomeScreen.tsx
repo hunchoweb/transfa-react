@@ -8,10 +8,6 @@ import VerifiedBadge from '@/assets/icons/verified.svg';
 import WalletReceiveIcon from '@/assets/icons/wallet-receive.svg';
 import WalletSendIcon from '@/assets/icons/wallet-send.svg';
 import WalletPlusIcon from '@/assets/icons/wallet.svg';
-import Avatar from '@/assets/images/avatar.svg';
-import Avatar1 from '@/assets/images/avatar1.svg';
-import Avatar2 from '@/assets/images/avatar2.svg';
-import Avatar3 from '@/assets/images/avatar3.svg';
 
 import AnimatedPageWrapper from '@/components/AnimatedPageWrapper';
 import BottomNavbar from '@/components/bottom-navbar';
@@ -465,25 +461,16 @@ const MemoUserItem = memo(({ user, onSelect }: { user: User; onSelect: (user: Us
 });
 
 const avatarMap: Record<string, React.ComponentType<{ width?: number; height?: number }>> = {
-  avatar: Avatar,
-  avatar1: Avatar1,
-  avatar2: Avatar2,
-  avatar3: Avatar3,
+  avatar: AvatarDefaultIcon,
+  avatar1: AvatarDefaultIcon,
+  avatar2: AvatarDefaultIcon,
+  avatar3: AvatarDefaultIcon,
 };
 
 const avatarRotation = ['avatar1', 'avatar2', 'avatar3'] as const;
 
 const pickAvatarKey = (seed: string) => {
-  if (!seed) {
-    return avatarRotation[0];
-  }
-
-  let hash = 0;
-  for (let index = 0; index < seed.length; index += 1) {
-    hash += seed.charCodeAt(index) * (index + 1);
-  }
-
-  return avatarRotation[hash % avatarRotation.length];
+  return avatarRotation[0];
 };
 
 const koboToNaira = (value?: number) => {
@@ -508,8 +495,8 @@ const MemoTransactionItem = memo(
     onComplete: (idx: number) => void;
   }) => {
     const isSent = transaction.type === 'sent';
-    const OtherUserAvatar = avatarMap[transaction.otherUserAvatar || 'avatar1'] || Avatar1;
-    const CurrentUserAvatar = Avatar;
+    const OtherUserAvatar = avatarMap[transaction.otherUserAvatar || 'avatar1'] || AvatarDefaultIcon;
+    const CurrentUserAvatar = AvatarDefaultIcon;
 
     return (
       <Animated.View
@@ -840,13 +827,7 @@ export default function HomeScreen() {
                   })
                 }
               >
-                {Avatar ? (
-                  <Avatar width={scale(49)} height={scale(49)} />
-                ) : (
-                  <View style={styles.defaultAvatarContainerHeader}>
-                    <AvatarDefaultIcon width={scale(28)} height={scale(28)} color="#ffffff" />
-                  </View>
-                )}
+                <AvatarDefaultIcon width={scale(49)} height={scale(49)} />
               </Pressable>
               <View style={styles.welcomeContainer}>
                 <View style={styles.welcomeRow}>
