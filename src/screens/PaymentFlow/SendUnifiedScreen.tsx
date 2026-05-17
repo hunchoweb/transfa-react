@@ -831,7 +831,7 @@ const SendUnifiedScreen = ({
 
           {isFromList && (
             <View style={styles.listSelectionSection}>
-              <Text style={styles.inputLabel}>List</Text>
+              <Text style={styles.formFieldLabel}>List</Text>
               <TouchableOpacity
                 style={styles.listCard}
                 onPress={() => navigation.navigate('TransferLists')}
@@ -1016,20 +1016,20 @@ const SendUnifiedScreen = ({
                 )}
 
                 {isFromList ? (
-                  <>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>Amount</Text>
+                  <View style={styles.formFields}>
+                    <View style={styles.formFieldGroup}>
+                      <Text style={styles.formFieldLabel}>Amount</Text>
                       <View
                         style={[
-                          styles.inputWrapper,
-                          focusedField === 'listAmount' && styles.inputWrapperFocused,
+                          styles.formInputWrapper,
+                          focusedField === 'listAmount' && styles.formInputWrapperFocused,
                         ]}
                       >
                         <View style={styles.inputIcon}>
                           <NairaIcon width={17} height={15} color="#FFFFFF" />
                         </View>
                         <TextInput
-                          style={styles.input}
+                          style={styles.formInput}
                           placeholder="Amount"
                           placeholderTextColor="rgba(255, 255, 255, 0.32)"
                           value={formAmount}
@@ -1041,26 +1041,28 @@ const SendUnifiedScreen = ({
                       </View>
                     </View>
 
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>Narration</Text>
+                    <View style={styles.formFieldGroup}>
+                      <Text style={styles.formFieldLabel}>Narration</Text>
                       <View
                         style={[
-                          styles.inputWrapper,
-                          focusedField === 'listNarration' && styles.inputWrapperFocused,
+                          styles.formTextAreaWrapper,
+                          focusedField === 'listNarration' && styles.formInputWrapperFocused,
                         ]}
                       >
                         <TextInput
-                          style={styles.input}
+                          style={styles.formTextArea}
                           placeholder="Enter Narration"
                           placeholderTextColor="rgba(255, 255, 255, 0.32)"
                           value={formNarration}
                           onChangeText={handleNarrationChange}
+                          multiline
+                          numberOfLines={4}
                           onFocus={() => setFocusedField('listNarration')}
                           onBlur={() => setFocusedField(null)}
                         />
                       </View>
                     </View>
-                  </>
+                  </View>
                 ) : null}
 
                 {/* Divider after Amount/Narration when from list */}
@@ -1645,6 +1647,55 @@ const styles = StyleSheet.create({
   formSection: {
     // marginBottom: 24,
   },
+  formFields: {
+    gap: 20,
+    marginBottom: 0,
+  },
+  formFieldGroup: {
+    marginBottom: 0,
+  },
+  formFieldLabel: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_400Regular',
+    marginBottom: 8,
+  },
+  formInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#333333',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 48,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+    gap: 10,
+  },
+  formInputWrapperFocused: {
+    borderColor: 'rgba(255, 211, 0, 0.5)',
+  },
+  formInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_400Regular',
+  },
+  formTextAreaWrapper: {
+    backgroundColor: '#333333',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+    minHeight: 100,
+  },
+  formTextArea: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_400Regular',
+    textAlignVertical: 'top',
+    minHeight: 72,
+  },
   inputGroup: {},
   inputLabel: {
     fontSize: 14,
@@ -1792,7 +1843,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_600SemiBold',
   },
   listSelectionSection: {
-    marginBottom: 24,
+    marginBottom: 0,
   },
   listCard: {
     flexDirection: 'row',
@@ -1832,7 +1883,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_400Regular',
   },
   listUsersSection: {
-    marginTop: 20,
+    marginTop: 0,
+    marginBottom: 0,
   },
   listUserCard: {
     flexDirection: 'row',
